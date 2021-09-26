@@ -1,0 +1,54 @@
+/*给定一个非负整数数组 A， A 中一半整数是奇数，一半整数是偶数。
+
+对数组进行排序，以便当 A[i] 为奇数时，i 也是奇数；当 A[i] 为偶数时， i 也是偶数。
+
+你可以返回任何满足上述条件的数组作为答案。
+
+ 
+
+示例：
+
+输入：[4,2,5,7]
+输出：[4,5,2,7]
+解释：[4,7,2,5]，[2,5,4,7]，[2,7,4,5] 也会被接受。
+
+来源：力扣（LeetCode）
+链接：https://leetcode-cn.com/problems/sort-array-by-parity-ii
+著作权归领扣网络所有。商业转载请联系官方授权，非商业转载请注明出处。*/
+/**
+ * Note: The returned array must be malloced, assume caller calls free().
+ */
+ //解题方法，定义第一位和第二位分别和最后一位比较，如果是偶数就和第一位交换，如果是奇数就和第二位交换；每次交换对应的坐标就+2；
+ int number_judge(int number)
+ {
+     if(number % 2 == 0)
+     {
+         return 0;
+     }
+     else
+     {
+         return 1;
+     }
+ }
+int* sortArrayByParityII(int* nums, int numsSize, int* returnSize){
+     int prev = 0,cur =1;
+     while(prev < numsSize && cur <numsSize)
+     {
+          if(number_judge(nums[numsSize -1]) == 0)
+          {
+              int temp1 = nums[numsSize -1];
+              nums[numsSize -1] = nums[prev];
+              nums[prev] = temp1;
+              prev +=2;
+          }
+         else if(number_judge(nums[numsSize -1]) == 1)
+         {
+             int temp2 = nums[numsSize -1];
+              nums[numsSize -1] = nums[cur];
+              nums[cur] = temp2;
+              cur +=2;
+         }
+     }
+     *returnSize  = numsSize;
+     return nums;
+}
