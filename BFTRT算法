@@ -1,0 +1,173 @@
+内容：
+
+1、原始问题     =》  O(N*logN)
+
+2、BFPRT算法    =》 O(N)
+
+ 
+
+ 
+
+ 
+
+1、原始问题
+
+问题描述：给你一个整型数组，返回其中第K小的数
+
+普通解法：
+
+这道题可以利用荷兰国旗改进的 partition 和随机快排的思想：随机选出一个数，将数组以该数作比较划分为 <,=,> 三个部分，
+
+则 = 部分的数是数组中第几小的数不难得知，接着对 < （如果第K小的数在 < 部分）或 > （如果第K小的数在 > 部分）部分的数
+
+递归该过程，直到 = 部分的数正好是整个数组中第K小的数。这种做法不难求得时间复杂度的数学期望为 O(NlogN) （以2为底）。
+
+但这毕竟是数学期望，在实际工程中的表现可能会有偏差(最坏情况下的时间复杂度会达到O(N^2))
+
+BFPRT算法可以说是这种算法的一种优化吧，故在此就不写这种解法的代码了
+
+ 
+
+另外一种普通解法：
+
+用堆去做，时间复杂度是靠谱的O(N*logk)
+
+代码如下：
+
+复制代码
+ 1     // 大根堆比较器
+ 2     public static class MaxheapComparator implements Comparator<Integer> {
+ 3         @Override
+ 4         public int compare(Integer o1, Integer o2) {
+ 5             return o2 - o1; 
+ 6         }
+ 7     }
+ 8 
+ 9     // O(N*logk)的解法
+10     public static PriorityQueue getMinKNumsByHeap(int[] arr, int k) {
+11         if (k < 1 || k > arr.length) {
+12             return null;
+13         }
+14         PriorityQueue<Integer> kHeap = new PriorityQueue<Integer>(k,
+15                 new MaxheapComparator());
+16         for (int i = 0; i != k; i++) {
+17             kHeap.add(arr[i]);
+18         }
+19         for (int i = k; i != arr.length; i++) {
+20             if (arr[i] < kHeap.peek()) {
+21                 kHeap.poll();
+22                 kHeap.add(arr[i]);
+23             }
+24         }
+25         return kHeap;
+26     }
+27 
+28     public static void main(String[] args) {
+29         int[] arr = { 1, 3, 2, 5, 9 };
+30         // 测试普通方法
+31         System.out.println(getMinKNumsByHeap(arr, 1).peek());
+32         System.out.println(getMinKNumsByHeap(arr, 2).peek());
+33         System.out.println(getMinKNumsByHeap(arr, 3).peek());
+34         System.out.println(getMinKNumsByHeap(arr, 4).peek());
+35         System.out.println(getMinKNumsByHeap(arr, 5).peek());
+36     }
+复制代码
+ 
+
+ 
+
+2、BFPRT算法
+
+BFPRT算法能够做到时间复杂度就是 O(N)    BFPRT算法，接收一个数组和一个K值，返回数组中的一个数
+
+1. 数组被划分为了 N/5 个小部分，每个部分的5个数排序需要 O(1) ，所有部分排完需要 O(N/5)=O(N)
+
+2. 取出每个小部分的中位数，一共有 N/5 个，递归调用BFPRT算法得到这些数中第 (N/5)/2 小的数（即这些数 的中位数），记为 pivot
+
+3. 以 pivot 作为比较，将整个数组划分为 <pivot , =pivot , >pivot 三个区域
+
+4. 判断第K小的数在哪个区域，如果在 = 区域则直接返回 pivot ，如果在 < 或 > 区域，则将这个区域的数递 归调用BFPRT算法
+
+5. base case ：在某次递归调用BFPRT算法时发现这个区域只有一个数，那么这个数就是我们要找的数
+
+复制代码
+ 1     // O(N)的解法
+ 2     public static int getMinKthNum(int[] arr, int k){
+ 3         if(arr==null||k>arr.length){
+ 4             return Integer.MIN_VALUE;
+ 5         }
+ 6         int[] copyArr = Arrays.copyOf(arr, arr.length);
+ 7         return BFPRT(copyArr, 0, arr.length-1, k-1);
+ 8     }
+ 9     
+10     private static int[] partition(int[] arr, int begin, int end, int pivot){
+11         int L = begin-1;
+12         int R = end + 1;
+13         int cur = begin;
+14         while(cur!=R){
+15             if(arr[cur]>pivot){
+16                 swap(arr, cur, --R);
+17             } else if(arr[cur]<pivot){
+18                 swap(arr, cur++, ++L);
+19             } else{
+20                 cur++;
+21             }
+22         }
+23         return new int[]{L+1, R-1};
+24     }
+25     
+26     private static int BFPRT(int[] arr, int begin, int end, int i) {
+27         if (begin == end) {
+28             return arr[begin];
+29         }
+30         int pivot = medianOfMedians(arr, begin, end);
+31         int[] pivotRange = partition(arr, begin, end, pivot);
+32         if(i>=pivotRange[0]&&i<=pivotRange[1]){
+33             return arr[i];
+34         } else if(i<pivotRange[0]){
+35             return BFPRT(arr, begin, pivotRange[0]-1, i);
+36         } else{
+37             return BFPRT(arr, pivotRange[1] + 1, end, i);
+38         }
+39     }
+40 
+41     private static int medianOfMedians(int[] arr, int begin, int end) {
+42         int num = end - begin + 1;
+43         int offset = num % 5 == 0 ? 0 : 1;
+44         int[] medians = new int[num / 5 + offset];
+45         for (int i = 0; i < medians.length; i++) {
+46             int beginI = begin + i * 5;
+47             int endI = beginI + 4;
+48             medians[i] = getMedian(arr, beginI, Math.min(endI, end));
+49         }
+50         return BFPRT(medians, 0, medians.length - 1, medians.length / 2);
+51     }
+52     
+53     private static int getMedian(int[] arr, int begin, int end){
+54         insertionSort(arr, begin, end);
+55         int sum = end + begin;
+56         int mid = (sum/2) + (sum%2);
+57         return arr[mid];
+58     }
+59     
+60     private static void insertionSort(int[] arr, int begin, int end){
+61         if(begin>=end){
+62             return;
+63         }
+64         for(int i=begin+1;i<=end;i++){
+65             for(int j=i;j>begin;j--){
+66                 if(arr[j]<arr[j-1]){
+67                     swap(arr, j, j-1);
+68                 } else{
+69                     break;
+70                 }
+71             }
+72         }
+73     }
+74     
+75     private static void swap(int[]arr , int i, int j){
+76         int tmp = arr[i];
+77         arr[i] = arr[j];
+78         arr[j] = tmp;
+79     }
+复制代码
