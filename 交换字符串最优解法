@@ -1,0 +1,70 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+//char* reverse(char* str, int left,int right)
+//{
+//	while (left < right)
+//	{
+//		char temp = str[left];
+//		str[left++] = str[right];
+//		str[right--] = temp;
+//	}
+//	return str;
+//}
+//int main()
+//{
+//	char str[] = "abcdefg";
+//	int pos = 5;
+//	reverse(str, 0,4);
+//	reverse(str, 5, 6);
+//	reverse(str, 0, 6);
+//	printf("%s\n", str);
+//}
+int min_number(int a, int b)
+{
+	return a < b ? a : b;
+}
+void reverse(char* str, int left, int right, int size)
+{
+	int i = right - size + 1;     //交换右侧起始位置
+	while (size--)
+	{
+		char temp = str[left];
+		str[left++] = str[i];
+		str[i++] = temp;
+	}
+}
+char* exchange(char* str, int leftsize)
+{
+	int L = 0;
+	int R = strlen(str) - 1;
+	int lpart = leftsize;
+	int rpart = strlen(str) - leftsize;
+	int same = min_number(lpart, rpart);   //去两侧较小的
+	int diff = lpart - rpart;             //用于迭代
+	reverse(str, L, R, same);
+	while (diff != 0)
+	{
+		if (diff > 0)
+		{
+			L += same;
+			lpart = diff;
+		}
+		else
+		{
+			R -= same;
+			rpart = -diff;
+		}
+		same = min_number(lpart, rpart);
+		diff = lpart - rpart;
+		reverse(str, L, R, same);
+	}
+	return str;
+}
+int main()
+{
+	char str[] = "abcdefgh";
+	int pos = 5;
+	exchange(str, pos);
+	printf("%s", str);
+}
