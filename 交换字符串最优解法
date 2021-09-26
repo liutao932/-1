@@ -42,7 +42,7 @@ char* exchange(char* str, int leftsize)
 	int rpart = strlen(str) - leftsize;
 	int same = min_number(lpart, rpart);   //去两侧较小的
 	int diff = lpart - rpart;             //用于迭代
-	reverse(str, L, R, same);
+	reverse(str, L, R, same);      //交换same 个字符
 	while (diff != 0)
 	{
 		if (diff > 0)
