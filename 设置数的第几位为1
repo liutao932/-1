@@ -1,0 +1,27 @@
+void PrintBit(int x)
+{
+	int num = sizeof(x) * 8 -1;
+	while (num >= 0)
+	{
+		if (x &(1 << num))
+		{
+			printf("1 ");
+		}
+		else
+		{
+			printf("0 ");
+		}
+		num--;
+	}
+}
+
+#define SETBIT(a,n)  (a |= (1 << (n-1)))
+int main()
+{
+	int a = 0;
+	int n = 5;
+#ifdef DEBUG
+	printf("%d", SETBIT(a, n));
+#endif // DEBUG
+	PrintBit(SETBIT(a, n));
+}
