@@ -1,0 +1,33 @@
+#include<stdio.h>
+#include<stdlib.h>
+void exchange1(int* a, int* b)
+{
+	int tmp = *a;
+	*a = *b;
+	*b = tmp;
+}
+void exchange2(int* a, int* b)
+{
+	*a = *a + *b;
+	*b = *a - *b;
+	*a = *a - *b;
+}
+void exchange3(int* a, int* b)
+{
+	*a = *a ^ *b;
+	*b = *a ^ *b;
+	*a = *a ^ *b;
+}
+int main()
+{
+	int a = 10, b = 20;
+#ifdef DEBUG
+	exchange1(&a, &b);
+#endif // DEBUG
+
+#ifdef DEBUG
+	exchange2(&a, &b);
+#endif // DEBUG
+	exchange3(&a, &b);
+	printf("%d %d",a,b);
+}
