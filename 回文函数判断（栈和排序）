@@ -1,0 +1,107 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<assert.h>
+#include<stdbool.h>
+typedef char StackDataType;
+typedef struct stack
+{
+	StackDataType* a;
+	int top;
+	int capatity;
+}ST;
+void InitStack(ST* pc);
+void PushStack(ST* pc, StackDataType data);
+void PopStack(ST* pc);
+StackDataType TopStack(ST* pc);
+bool EmptyStack(ST* pc);
+void DestroyStack(ST* pc);
+void InitStack(ST* pc)
+{
+	pc->a = NULL;
+	pc->top = 0;
+	pc->capatity = 0;
+}
+void PushStack(ST* pc, StackDataType data)
+{
+	assert(pc);
+	if (pc->top == pc->capatity)
+	{
+		int newcapatiy = pc->capatity == 0 ? 4 : pc->capatity * 2;
+		StackDataType* tmp = (StackDataType*)realloc(pc->a, newcapatiy);
+		pc->a = tmp;
+		pc->capatity = newcapatiy;
+	}
+	pc->a[pc->top++] = data;
+}
+void PopStack(ST* pc)
+{
+	assert(pc);
+	assert(pc->top > 0);
+	pc->top--;
+}
+StackDataType TopStack(ST* pc)
+{
+	assert(pc);
+	assert(pc->top > 0);
+	return pc->a[pc->top - 1];
+}
+bool EmptyStack(ST* pc)
+{
+	assert(pc);
+	return pc->top == 0;
+}
+void DestroyStack(ST* pc)
+{
+	assert(pc);
+	free(pc->a);
+	pc->a = NULL;
+}
+void StrSort(char *str,int len)
+{
+    int gap = len;
+    while(gap > 1)
+    {
+        gap = gap /3 + 1;
+        for(int i = 0; i< len -gap;i++)
+        {
+            int end = i;
+            int x = str[end + gap];
+            while(end>= 0)
+            {
+                if(str[end] > x)
+                 {
+                  str[end + gap] = str[end];
+                  end -= gap;
+                 }
+                else
+                 {
+                     break;
+                 }
+            }
+            str[end+gap] = x;
+        }
+    }
+}
+bool canPermutePalindrome(char* s){
+    ST  st;
+    InitStack(&st);
+    int len = strlen(s);
+    StrSort(s,len);
+    while(*s)
+    {
+         PushStack(&st,*s);
+         s++;
+        if(TopStack(&st) == *s)
+        {
+            PopStack(&st);
+            s++;
+        }
+    }
+    if(st.top == 0 || st.top == 1)
+    {
+        DestroyStack(&st);
+        return true;
+    }
+    DestroyStack(&st);
+    return false;
+}
