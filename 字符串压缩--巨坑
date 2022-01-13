@@ -1,0 +1,81 @@
+void reverse(char* str)
+{
+	int left = 0, rigth = strlen(str) - 1;
+	while (left < rigth)
+	{
+		char tmp = str[left];
+		str[left++] = str[rigth];
+		str[rigth--] = tmp;
+	}
+}
+char* strnum(int num)
+{
+	int count = 0;
+	int num1 = num;
+	while (num1)
+	{
+		count++;
+		num1 /= 10;
+	}
+	char* array = (char*)malloc(sizeof(char) * count);
+	int pos = 0;
+	while (num)
+	{
+		array[pos++] = num % 10 + '0';
+		num /= 10;
+	}
+	array[pos++] = '\0';
+	reverse(array);
+	return array;
+}
+char* compressString(char* S){
+    if(S == NULL)
+    return NULL;
+    int len = strlen(S);
+    char *str = (char *)malloc(sizeof(char) * 50000);
+    int prev = 0, cur = 1;
+    int count = 1,pos = 0;
+    while(cur < len)
+    {
+        if(S[prev] == S[cur])
+        {
+            prev++;
+            cur++;
+            count++;
+        }
+        else
+        {
+            str[pos++] = S[prev];
+            char *p = strnum(count);
+            for(int i = 0; i< strlen(p);i++)
+            {
+                str[pos++] = p[i];
+            }
+           // str[pos++] = count + '0';
+            prev++;
+            cur++;
+            count = 1;
+        }
+    }
+    if(S[prev] != S[cur-1])
+    {
+        str[pos++] = S[cur -1];
+        str[pos++] = '1';
+    }
+    else
+    {
+         str[pos++] =S[cur-1];
+         char *p = strnum(count);
+         for(int i = 0; i< strlen(p);i++)
+         {
+             str[pos++] = p[i];
+         }
+       // str[pos++] = count + '0';
+    }
+    str[pos++] = '\0';
+    if(pos > len)
+    {
+        return S;
+    }
+    return str;
+}
