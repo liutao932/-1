@@ -1,0 +1,40 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#pragma warning(disable:4996)
+int itoa(char* str, int num) 
+{
+	//简单的一个数字转字符串函数，将转换后的数字字符串放到str空间中
+	char tmp[16] = { 0 };
+	int count = 0;
+	while (num) {
+		tmp[count++] = (num % 10) + '0';//将个位数字转换为对应数字字符放到tmp空间中（逆序的）
+		num /= 10;
+	} 
+		for (int i = 0; i < count; i++) {
+			str[i] = tmp[count - i - 1]; //逆序将数字字符放入传入的str空间中
+		} 
+	return count;//返回转换的数字字符串长度
+} 
+char* compressString(char* S) {
+	int len = strlen(S);
+	//申请新的空间，注意空间有可能所需会变大，比如abc -> a1b1c1
+	char* newstr = (char*)calloc(len, 3);
+	int pos = 0;
+	char* s = S;
+	while (*s != '\0') {
+		char* n = s + 1;
+		while (*n != '\0' && *n == *s) n++;//走到下一个不同字符处停下
+		int len1 = n - s;//相同字符的长度
+		newstr[pos++] = *s;// 先赋值对应字符
+		pos += itoa(newstr + pos,len1);//编写了一个数字转字符函数，将数字放到字符串空间指定位置
+		s = n;//下一个不同的字符处
+	} 
+		return strlen(newstr) >= len ? S : newstr;
+}
+int main()
+{
+	char str[128];
+	gets(str);
+	printf(compressString(str));
+}
