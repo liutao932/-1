@@ -1,0 +1,96 @@
+以字符串的形式读入两个数字，编写一个函数计算它们的和，以字符串形式返回。
+
+数据范围：len(s),len(t) \le 100000len(s),len(t)≤100000，字符串仅由'0'~‘9’构成
+要求：时间复杂度 O(n)O(n)
+示例1
+输入：
+"1","99"
+复制
+返回值：
+"100"
+复制
+说明：
+1+99=100      
+示例2
+输入：
+"114514",""
+复制
+返回值：
+"114514"
+复制
+
+
+char* solve(char* s, char* t)
+{
+    int lens = strlen(s), lent = strlen(t);
+    int newlen = lens > lent ? lens + 1 : lent + 1;
+    int maxlen = newlen;
+    char* str = (char*)malloc(sizeof(char) * newlen);
+    int flag = 0;
+    while (lens -1 >= 0 && lent -1 >= 0)
+    {
+        int tmp = (s[lens - 1] - '0') + (t[lent - 1] - '0') + flag;
+        str[newlen - 1] = (tmp % 10) + '0';
+        tmp /= 10;
+        if (tmp)
+        {
+            flag = 1;
+        }
+        else
+        {
+            flag = 0;
+        }
+        lens--;
+        lent--;
+        newlen--;
+    }
+    while (lens-1 >= 0)
+    {
+        int tmp = (s[lens - 1] - '0') + flag;
+        str[newlen - 1] = (tmp % 10) + '0';
+        if (tmp)
+        {
+            flag = 1;
+        }
+        else
+        {
+            flag = 0;
+        }
+        lens--;
+        newlen--;
+    }
+    while (lent-1 >= 0)
+    {
+        int tmp = (t[lent - 1] - '0') + flag;
+        str[newlen - 1] = (tmp % 10) + '0';
+        if (tmp)
+        {
+            flag = 1;
+        }
+         else
+        {
+            flag = 0;
+        }
+        lent--;
+        newlen--;
+    }
+    if (flag)
+    {
+        str[newlen - 1] = '1';
+        str[maxlen] = '\0';
+    }
+    else
+    {
+        for (int i = 1; i < maxlen; i++)
+        {
+            str[i - 1] = str[i];
+        }
+        str[maxlen- 1] = '\0';
+    }
+    
+     if(str[0]=='0')
+     {
+         return "0";
+     }
+    return str;
+}
